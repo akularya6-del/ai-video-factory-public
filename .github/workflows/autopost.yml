@@ -1,0 +1,86 @@
+name: Autonomous Video Factory (3 Channels)
+
+on:
+  schedule:
+    # Run every 8 hours for each channel (staggered)
+    # Channel 1: 00:00, 08:00, 16:00
+    - cron: '0 0,8,16 * * *'
+    # Channel 2: 02:00, 10:00, 18:00
+    - cron: '0 2,10,18 * * *'
+    # Channel 3: 04:00, 12:00, 20:00
+    - cron: '0 4,12,20 * * *'
+  
+  # Allow manual trigger from the GitHub Actions tab
+  workflow_dispatch:
+    inputs:
+      channel:
+        description: 'Channel to post to (e.g., channel_1)'
+        required: true
+        default: 'channel_1'
+        type: choice
+        options:
+          - channel_1
+          - channel_2
+          - channel_3
+
+jobs:
+  generate-and-post:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # Needed to commit state back to the repo
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Determine Channel
+        id: set_channel
+        run: |
+          if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
+            echo "channel=${{ github.event.inputs.channel }}" >> $GITHUB_ENV
+          else
+            # Map cron times to channels
+            HOUR=$(date +"%H")
+            if [ "$HOUR" == "00" ] || [ "$HOUR" == "08" ] || [ "$HOUR" == "16" ]; then
+              echo "channel=channel_1" >> $GITHUB_ENV
+            elif [ "$HOUR" == "02" ] || [ "$HOUR" == "10" ] || [ "$HOUR" == "18" ]; then
+              echo "channel=channel_2" >> $GITHUB_ENV
+            else
+              echo "channel=channel_3" >> $GITHUB_ENV
+            fi
+          fi
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install FFmpeg
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Run Video Pipeline
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          YOUTUBE_CLIENT_ID: ${{ secrets.YOUTUBE_CLIENT_ID }}
+          YOUTUBE_CLIENT_SECRET: ${{ secrets.YOUTUBE_CLIENT_SECRET }}
+          YOUTUBE_REFRESH_TOKEN_CHANNEL_1: ${{ secrets.YOUTUBE_REFRESH_TOKEN_CHANNEL_1 }}
+          YOUTUBE_REFRESH_TOKEN_CHANNEL_2: ${{ secrets.YOUTUBE_REFRESH_TOKEN_CHANNEL_2 }}
+          YOUTUBE_REFRESH_TOKEN_CHANNEL_3: ${{ secrets.YOUTUBE_REFRESH_TOKEN_CHANNEL_3 }}
+          FFMPEG_PATH: /usr/bin/ffmpeg
+          FOOTAGE_BASE_PATH: ./footage/gameplay
+        run: |
+          echo "Running pipeline for ${{ env.channel }}"
+          node scripts/github-action.js --channel=${{ env.channel }}
+
+      - name: Commit and Push Updated Scripts State
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          git add content/
+          # Only commit if there are changes
+          git diff --quiet && git diff --staged --quiet || git commit -m "chore: mark script as used [skip ci]"
+          git push

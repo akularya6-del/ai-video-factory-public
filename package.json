@@ -1,0 +1,44 @@
+{
+  "name": "ai-video-factory",
+  "version": "1.0.0",
+  "description": "Automated AI-powered faceless short-form video pipeline",
+  "main": "generate-story.js",
+  "type": "commonjs",
+  "scripts": {
+    "story": "node generate-story.js",
+    "test:story": "node generate-story.js --topic \"revenge\" --length 90 --style revenge --out ./output/test-story.json",
+    "voice": "node generate-voice.js",
+    "test:voice": "node generate-voice.js --story-file ./output/test-story.json",
+    "captions": "node generate-captions.js",
+    "test:captions": "node generate-captions.js --story-file ./output/test-story.json --duration 78",
+    "render": "node render-video.js",
+    "test:render": "node render-video.js --auto --topic \"revenge\" --style revenge",
+    "api": "node api-server.js",
+    "test:api": "node api-server.js &",
+    "db:migrate": "node database/migrate.js",
+    "db:psql": "psql $DATABASE_URL",
+    "db:reset": "psql $DATABASE_URL -c 'DROP TABLE IF EXISTS pipeline_logs, job_costs, video_outputs, jobs CASCADE; DROP VIEW IF EXISTS v_job_summary; DROP FUNCTION IF EXISTS set_updated_at CASCADE;' && node database/migrate.js"
+  },
+  "keywords": [
+    "ai",
+    "video",
+    "automation",
+    "openai",
+    "youtube"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.1061.0",
+    "ajv": "^8.17.1",
+    "axios": "^1.17.0",
+    "cors": "^2.8.6",
+    "dotenv": "^16.5.0",
+    "express": "^5.2.1",
+    "form-data": "^4.0.5",
+    "googleapis": "^173.0.0",
+    "openai": "^4.99.0",
+    "pg": "^8.21.0",
+    "uuid": "^14.0.0"
+  }
+}

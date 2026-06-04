@@ -1,0 +1,8 @@
+node_modules/
+.env
+renders/
+output/
+*.mp3
+*.mp4
+!footage/gameplay/G1_lite.mp4
+.DS_Store
