@@ -72,7 +72,7 @@ class YouTubeProvider {
             categoryId: '24', // Entertainment
           },
           status: {
-            privacyStatus: config.youtube.defaultPrivacy || 'private', // private, unlisted, or public
+            privacyStatus: config.youtube.defaultPrivacy || 'public', // private, unlisted, or public
             selfDeclaredMadeForKids: false,
           },
         },
