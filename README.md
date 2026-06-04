@@ -40,7 +40,89 @@ The factory reads stories sequentially from JSON files.
 ```
 3. Repeat for `channel_2` and `channel_3`.
 4. *Note: As the pipeline runs, it will automatically mark `used: true` and commit the file back to GitHub so it never repeats a story!*
+Genrate the script using with this prompt
+```
+**Platform:** ChatGPT / Claude / Gemini
 
+**Prompt:**
+
+Generate **100 highly emotional, psychologically engaging, binge-worthy short stories** designed to maximize viewer retention on social media platforms such as TikTok, YouTube Shorts, Instagram Reels, and Facebook Reels.
+
+### Story Requirements
+
+Each story must:
+
+* Trigger strong emotions (shock, sadness, hope, betrayal, love, guilt, regret, fear, curiosity, justice, revenge, redemption, etc.)
+* Begin with an irresistible **hook** in the first sentence.
+* Create immediate curiosity and suspense.
+* Use psychological triggers that make people want to continue reading or listening.
+* Include unexpected twists when appropriate.
+* Build emotional tension throughout the story.
+* End with a powerful payoff, revelation, emotional punch, or lesson.
+* Feel realistic and relatable.
+* Be written in simple, conversational English.
+* Be suitable for voice-over narration.
+* Be approximately 150–300 words long.
+* Avoid repetitive plots and themes.
+* Every story should feel unique and memorable.
+
+### Story Categories
+
+Mix stories across themes such as:
+
+* Family drama
+* Betrayal
+* Romance
+* Revenge
+* Redemption
+* Lost opportunities
+* Acts of kindness
+* Life-changing decisions
+* Childhood memories
+* Regret
+* Unexpected success
+* Sacrifice
+* Friendship
+* Mystery
+* Secrets
+* Emotional reunions
+
+### Output Format
+
+Return ONLY valid JSON.
+
+Use this exact structure:
+
+```json
+[
+  {
+    "id": 1,
+    "title": "Emotionally Compelling Title",
+    "story": "Full story text with a strong hook, suspense, emotional progression, and impactful ending.",
+    "used": false
+  },
+  {
+    "id": 2,
+    "title": "Emotionally Compelling Title",
+    "story": "Full story text with a strong hook, suspense, emotional progression, and impactful ending.",
+    "used": false
+  }
+]
+```
+
+### Additional Rules
+
+* IDs must be sequential from 1 to 100.
+* Every title must be unique and attention-grabbing.
+* Every story must be completely original.
+* Do not include explanations, markdown, comments, or extra text.
+* Ensure the JSON is valid and properly escaped.
+* Focus heavily on emotional storytelling, suspense, curiosity gaps, and psychological hooks that keep viewers engaged until the final sentence.
+* Make the stories feel like viral social media storytelling content.
+* The first sentence of every story should immediately grab attention and make the audience need to know what happens next.
+
+---
+```
 ### 4. Get Your YouTube Refresh Tokens
 You need to authorize the bot to upload to your YouTube channels.
 1. On your local computer, open your terminal and run: `npm install`
