@@ -2,14 +2,16 @@ name: Autonomous Video Factory (3 Channels)
 
 on:
   schedule:
-    # Run every 8 hours for each channel (staggered)
-    # Channel 1: 00:00, 08:00, 16:00
-    - cron: '0 0,8,16 * * *'
-    # Channel 2: 02:00, 10:00, 18:00
-    - cron: '0 2,10,18 * * *'
-    # Channel 3: 04:00, 12:00, 20:00
-    - cron: '0 4,12,20 * * *'
-  
+    # 5 videos per day per channel, staggered by 1 hour between channels
+    # Each channel runs every ~5 hours so uploads spread evenly across the day.
+    #
+    # Channel 1: 00:00, 05:00, 10:00, 15:00, 20:00 UTC
+    - cron: '0 0,5,10,15,20 * * *'
+    # Channel 2: 01:00, 06:00, 11:00, 16:00, 21:00 UTC
+    - cron: '0 1,6,11,16,21 * * *'
+    # Channel 3: 02:00, 07:00, 12:00, 17:00, 22:00 UTC
+    - cron: '0 2,7,12,17,22 * * *'
+
   # Allow manual trigger from the GitHub Actions tab
   workflow_dispatch:
     inputs:
@@ -39,11 +41,11 @@ jobs:
           if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
             echo "channel=${{ github.event.inputs.channel }}" >> $GITHUB_ENV
           else
-            # Map cron times to channels
+            # Map cron trigger hours to channels
             HOUR=$(date +"%H")
-            if [ "$HOUR" == "00" ] || [ "$HOUR" == "08" ] || [ "$HOUR" == "16" ]; then
+            if [ "$HOUR" == "00" ] || [ "$HOUR" == "05" ] || [ "$HOUR" == "10" ] || [ "$HOUR" == "15" ] || [ "$HOUR" == "20" ]; then
               echo "channel=channel_1" >> $GITHUB_ENV
-            elif [ "$HOUR" == "02" ] || [ "$HOUR" == "10" ] || [ "$HOUR" == "18" ]; then
+            elif [ "$HOUR" == "01" ] || [ "$HOUR" == "06" ] || [ "$HOUR" == "11" ] || [ "$HOUR" == "16" ] || [ "$HOUR" == "21" ]; then
               echo "channel=channel_2" >> $GITHUB_ENV
             else
               echo "channel=channel_3" >> $GITHUB_ENV

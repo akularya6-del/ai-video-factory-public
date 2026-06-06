@@ -1,6 +1,6 @@
 # 🤖 AI Video Factory (Serverless Edition)
 
-> **Fully automated, $0/month YouTube Shorts pipeline.** Generate a story → AI voiceover → synced captions → rendered video → auto-upload to YouTube. Runs 9 times a day across 3 channels using GitHub Actions — completely hands-free.
+> **Fully automated, $0/month YouTube Shorts pipeline.** Generate a story → AI voiceover → synced captions → rendered video → auto-upload to YouTube. Runs **15 times a day** across 3 channels (5 per channel) using GitHub Actions — completely hands-free.
 
 ---
 
@@ -341,31 +341,41 @@ Once you've confirmed it works manually, you're done! The built-in schedule take
 
 | Channel | Post Times (UTC) |
 |---|---|
-| Channel 1 | 12:00 AM, 8:00 AM, 4:00 PM |
-| Channel 2 | 2:00 AM, 10:00 AM, 6:00 PM |
-| Channel 3 | 4:00 AM, 12:00 PM, 8:00 PM |
+| Channel 1 | 12:00 AM, 5:00 AM, 10:00 AM, 3:00 PM, 8:00 PM |
+| Channel 2 | 1:00 AM, 6:00 AM, 11:00 AM, 4:00 PM, 9:00 PM |
+| Channel 3 | 2:00 AM, 7:00 AM, 12:00 PM, 5:00 PM, 10:00 PM |
 
-That's **9 videos per day, fully automated, for free.** 🚀
+That's **15 videos per day, fully automated, for free.** 🚀
 
 ---
 
 ## 📅 How the Schedule Works
 
-GitHub Actions runs on a cron schedule. The 3 channels are staggered by 2 hours so they don't run at the same time and compete for resources:
+GitHub Actions runs on a cron schedule. The 3 channels are staggered by 1 hour so they don't run at the same time and compete for resources. Each channel posts every ~5 hours:
 
 ```
 00:00 UTC → Channel 1
-02:00 UTC → Channel 2
-04:00 UTC → Channel 3
-08:00 UTC → Channel 1
-10:00 UTC → Channel 2
+01:00 UTC → Channel 2
+02:00 UTC → Channel 3
+05:00 UTC → Channel 1
+06:00 UTC → Channel 2
+07:00 UTC → Channel 3
+10:00 UTC → Channel 1
+11:00 UTC → Channel 2
 12:00 UTC → Channel 3
-16:00 UTC → Channel 1
-18:00 UTC → Channel 2
-20:00 UTC → Channel 3
+15:00 UTC → Channel 1
+16:00 UTC → Channel 2
+17:00 UTC → Channel 3
+20:00 UTC → Channel 1
+21:00 UTC → Channel 2
+22:00 UTC → Channel 3
 ```
 
 > 💡 GitHub Actions schedules run in UTC. Add your timezone offset to find your local post times.
+
+> ⚠️ **YouTube API Quota Note:** YouTube allows 10,000 API units per Google Cloud project per day. Each upload costs 1,600 units. To safely run 5 uploads/day per channel, create a **separate Google Cloud project for each channel** (each gets its own 10,000 unit quota). See Step 3 for how to create a project. For channels 2 and 3, add separate `YOUTUBE_CLIENT_ID_CHANNEL_2`, `YOUTUBE_CLIENT_SECRET_CHANNEL_2` etc. secrets — or simply request a free quota increase at [console.cloud.google.com/iam-admin/quotas](https://console.cloud.google.com/iam-admin/quotas).
+
+> ⚠️ **GitHub Actions Minutes Note:** Private repos get 2,000 free minutes/month. At 15 runs/day (~5 min each) = ~2,250 min/month. To avoid overages, either make the repo **Public** (unlimited free minutes) or keep it private and monitor usage under **Settings → Billing**.
 
 ---
 
@@ -379,7 +389,7 @@ GitHub Actions runs on a cron schedule. The 3 channels are staggered by 2 hours 
 | YouTube API | Video upload | **Free** |
 | **Total** | | **~$0.01–0.05 per video** |
 
-At 9 videos/day × 30 days = 270 videos/month ≈ **$5–$15/month in OpenAI credits** at most.
+At 15 videos/day × 30 days = 450 videos/month ≈ **$5–$25/month in OpenAI credits** at most.
 
 ---
 
