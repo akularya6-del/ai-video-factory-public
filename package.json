@@ -1,7 +1,7 @@
 {
   "name": "ai-video-factory",
   "version": "1.0.0",
-  "description": "Automated AI-powered faceless short-form video pipeline",
+  "description": "Zero-cost serverless pipeline that auto-generates AI voiceover stories, syncs captions with Whisper, renders vertical videos with FFmpeg, and uploads to 3 YouTube channels 9x/day via GitHub Actions — no hosting required.",
   "main": "generate-story.js",
   "type": "commonjs",
   "scripts": {
